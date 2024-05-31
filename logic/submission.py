@@ -13,7 +13,7 @@ def formula1a():
     California = Atom('California')       # whether we're in California
     Rain = Atom('Rain')                   # whether it's raining
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    formula = Implies(Summer, Or(Rain, California))
+    return Implies(And(Summer, California), Not(Rain))
     return formula
     # END_YOUR_CODE
 
@@ -24,7 +24,8 @@ def formula1b():
     Wet = Atom('Wet')                # whether it it wet
     Sprinklers = Atom('Sprinklers')  # whether the sprinklers are on
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    return Equiv(Wet, Or(Rain, Sprinklers))
+    return formula
     # END_YOUR_CODE
 
 # Sentence: "Either it's day or night (but not both)."
@@ -33,7 +34,10 @@ def formula1c():
     Day = Atom('Day')     # whether it's day
     Night = Atom('Night') # whether it's night
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    either_day_or_night = Or(Day, Night)
+    not_both = Not(And(Day, Night))
+    formula = And(either_day_or_night, not_both)
+    return formula
     # END_YOUR_CODE
 
 ############################################################
@@ -47,7 +51,8 @@ def formula2a():
 
     # Note: You do NOT have to enforce that the mother is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    formula = ForAll(x, Implies(Person(x), Exists(y, Mother(x, y))))
+    return formula
     # END_YOUR_CODE
 
 # Sentence: "At least one person has no children."
@@ -58,7 +63,8 @@ def formula2b():
 
     # Note: You do NOT have to enforce that the child is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    formula = Forall(x, Implies(Person(x), Exists(y, Child(x, y))))
+    return formula
     # END_YOUR_CODE
 
 # Return a formula which defines Daughter in terms of Female and Child.
@@ -69,7 +75,11 @@ def formula2c():
     def Child(x, y): return Atom('Child', x, y)        # whether x has a child y
     def Daughter(x, y): return Atom('Daughter', x, y)  # whether x has a daughter y
     # BEGIN_YOUR_CODE (our solution is 4 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    daughter_implies_female = Implies(Daughter(x, y), Female(y))
+    daughter_implies_child = Implies(Daughter(x, y), Child(x, y))
+    daughter_implies_female_and_child = And(daughter_implies_female, daughter_implies_child)
+    formula = Forall([x, y], daughter_implies_female_and_child)
+    return formula
     # END_YOUR_CODE
 
 # Return a formula which defines Grandmother in terms of Female and Parent.
@@ -80,7 +90,13 @@ def formula2d():
     def Parent(x, y): return Atom('Parent', x, y)            # whether x has a parent y
     def Grandmother(x, y): return Atom('Grandmother', x, y)  # whether x has a grandmother y
     # BEGIN_YOUR_CODE (our solution is 5 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    is_female = Female(y)
+    y_parent_of_z = Parent(y, z)
+    z_parent_of_x = Parent(z, x)
+    y_is_grandmother = And(is_female, Exists(z, And(y_parent_of_z, z_parent_of_x)))
+    grandmother_equiv = Equiv(Grandmother(y, x), y_is_grandmother)
+    formula = Forall([x, y], grandmother_equiv)
+    return formula
     # END_YOUR_CODE
 
 ############################################################
@@ -111,7 +127,29 @@ def liar():
     formulas.append(Equiv(TellTruth(john), Not(CrashedServer(john))))
     # You should add 5 formulas, one for each of facts 1-5.
     # BEGIN_YOUR_CODE (our solution is 11 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    # Fact 1: Susan: "It was Nicole!"
+    if_true_susan_nicole = And(Equals(TellTruth(susan), True), Equals(CrashedServer(nicole), True))
+    if_false_susan_nicole = And(Equals(TellTruth(susan), False), Equals(CrashedServer(nicole), False))
+    formulas.append(Or(if_true_susan_nicole, if_false_susan_nicole))
+
+    # Fact 2: Mark: "No, it was Susan!"
+    if_true_mark_susan = And(Equals(TellTruth(mark), True), Equals(CrashedServer(susan), True))
+    if_false_mark_susan = And(Equals(TellTruth(mark), False), Equals(CrashedServer(susan), False))
+    formulas.append(Or(if_true_mark_susan, if_false_mark_susan))
+
+    # Fact 3: Nicole: "Susan's a liar."
+    if_true_nicole_susan_liar = And(Equals(TellTruth(nicole), True), Equals(TellTruth(susan), False))
+    if_false_nicole_susan_liar = And(Equals(TellTruth(nicole), False), Equals(TellTruth(susan), True))
+    formulas.append(Or(if_true_nicole_susan_liar, if_false_nicole_susan_liar))
+
+    # Fact 4: Exactly one person is telling the truth.
+    truthful_people = [TellTruth(john), TellTruth(susan), TellTruth(nicole), TellTruth(mark)]
+    formulas.append(ExactlyOne(truthful_people))
+
+    # Fact 5: Exactly one person crashed the server.
+    server_crashers = [CrashedServer(john), CrashedServer(susan), CrashedServer(nicole), CrashedServer(mark)]
+    formulas.append(ExactlyOne(server_crashers))
+
     # END_YOUR_CODE
     query = CrashedServer('$x')
     return (formulas, query)
@@ -143,7 +181,43 @@ def ints():
     formulas = []
     query = None
     # BEGIN_YOUR_CODE (our solution is 23 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+        # Law 0: Each number x has exactly one successor, which is not equal to x.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        formulas.append(Exists('$y', And(Successor(x, '$y'), Not(Equals(x, '$y')))))
+
+    # Law 1: Each number is either even or odd, but not both.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        formulas.append(Or(And(Even(x), Not(Odd(x))), And(Odd(x), Not(Even(x)))))
+
+    # Law 2: The successor number of an even number is odd.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        for y in range(10):  # Assuming numbers range from 0 to 9 for illustration
+            if Even(x) and Successor(x, y):
+                formulas.append(Odd(y))
+
+    # Law 3: The successor number of an odd number is even.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        for y in range(10):  # Assuming numbers range from 0 to 9 for illustration
+            if Odd(x) and Successor(x, y):
+                formulas.append(Even(y))
+
+    # Law 4: For every number x, the successor of x is larger than x.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        for y in range(10):  # Assuming numbers range from 0 to 9 for illustration
+            if Successor(x, y):
+                formulas.append(Larger(y, x))
+
+    # Law 5: Larger is a transitive property: if x is larger than y and y is larger than z, then x is larger than z.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        for y in range(10):  # Assuming numbers range from 0 to 9 for illustration
+            for z in range(10):  # Assuming numbers range from 0 to 9 for illustration
+                if Larger(x, y) and Larger(y, z):
+                    formulas.append(Larger(x, z))
+
+    # Query: For each number, there exists an even number larger than it.
+    for x in range(10):  # Assuming numbers range from 0 to 9 for illustration
+        formulas.append(Exists('$y', And(Even('$y'), Larger('$y', x))))
+
     # END_YOUR_CODE
     query = Forall('$x', Exists('$y', And(Even('$y'), Larger('$y', '$x'))))
     return (formulas, query)
