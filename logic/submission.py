@@ -51,6 +51,8 @@ def formula2a():
 
     # Note: You do NOT have to enforce that the mother is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
+    x = Variable('x')
+    y = Variable('y')
     formula = ForAll(x, Implies(Person(x), Exists(y, Mother(x, y))))
     return formula
     # END_YOUR_CODE
@@ -63,6 +65,8 @@ def formula2b():
 
     # Note: You do NOT have to enforce that the child is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
+    x = Variable('x')
+    y = Variable('y')
     formula = Forall(x, Implies(Person(x), Exists(y, Child(x, y))))
     return formula
     # END_YOUR_CODE
@@ -75,6 +79,8 @@ def formula2c():
     def Child(x, y): return Atom('Child', x, y)        # whether x has a child y
     def Daughter(x, y): return Atom('Daughter', x, y)  # whether x has a daughter y
     # BEGIN_YOUR_CODE (our solution is 4 lines of code, but don't worry if you deviate from this)
+    x = Variable('x')
+    y = Variable('y')
     daughter_implies_female = Implies(Daughter(x, y), Female(y))
     daughter_implies_child = Implies(Daughter(x, y), Child(x, y))
     daughter_implies_female_and_child = And(daughter_implies_female, daughter_implies_child)
@@ -90,6 +96,9 @@ def formula2d():
     def Parent(x, y): return Atom('Parent', x, y)            # whether x has a parent y
     def Grandmother(x, y): return Atom('Grandmother', x, y)  # whether x has a grandmother y
     # BEGIN_YOUR_CODE (our solution is 5 lines of code, but don't worry if you deviate from this)
+    x = Variable('x')
+    y = Variable('y')
+    z = Variable('z')
     is_female = Female(y)
     y_parent_of_z = Parent(y, z)
     z_parent_of_x = Parent(z, x)
