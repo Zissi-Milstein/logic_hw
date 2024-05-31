@@ -51,7 +51,7 @@ def formula2a():
 
     # Note: You do NOT have to enforce that the mother is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    formula = ForAll($x, Implies(Person($x), Exists($y, Mother($x, $y))))
+    formula = ForAll('$x', Implies(Person('$x'), Exists('$y', Mother('$x', '$y'))))
     return formula
     # END_YOUR_CODE
 
@@ -63,8 +63,6 @@ def formula2b():
 
     # Note: You do NOT have to enforce that the child is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    x = Variable('$x')
-    y = Variable('$y')
     formula = Forall(x, Implies(Person(x), Exists(y, Child(x, y))))
     return formula
     # END_YOUR_CODE
