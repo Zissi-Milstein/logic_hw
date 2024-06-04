@@ -51,7 +51,7 @@ def formula2a():
 
     # Note: You do NOT have to enforce that the mother is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-     raise Exception("Not implemented yet")
+    return Exists('$x',Forall('$y',And(Person('$x'),Not(Child('$x','$y')))))
     # END_YOUR_CODE
 
 # Sentence: "At least one person has no children."
