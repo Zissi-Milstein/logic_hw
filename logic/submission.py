@@ -62,8 +62,7 @@ def formula2b():
 
     # Note: You do NOT have to enforce that the child is a "person"
     # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
-    return formula
+    return Exists('$x',Forall('$y',And(Person('$x'),Not(Child('$x','$y')))))
     # END_YOUR_CODE
 
 # Return a formula which defines Daughter in terms of Female and Child.
